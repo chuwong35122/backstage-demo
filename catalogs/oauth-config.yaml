@@ -3,8 +3,12 @@ kind: API
 metadata:
   name: oauth-2.0
   description: Authenticate to Endpoint bank with OAuth2.0
+  tags:
+    - team:apim
+    - external
+    - authentication
   links:
-    - url: https://github.com/chuwong35122/backstage-demo/blob/main/catalog-info/open-api/oauth.yaml
+    - url: https://github.com/chuwong35122/backstage-demo/blob/main/open-api/oauth.yaml
       title: Github repo
       icon: github
 spec:
