@@ -1,0 +1,1348 @@
+openapi: 3.0.0
+info:
+  title: APIM – Fund Transfer
+  description: |-
+    specification Fund Transfer
+
+    # Versioning
+    | Version | Date | Summary of changes | Author |
+    |---------|------|--------------------|--------|
+    | 1.0.0 | 27-10-2021 | Initial version <br />Original doc : Fund Transfer Interface Specification Version 1.0  | B P |
+
+    # Service Flow
+
+    Inquiry Account, Fund Transfer and Inquiry Status
+
+    <img src="https://raw.githubusercontent.com/chuwong35122/backstage-demo/main/catalog-info/diagram.jpg" />
+
+  version: 1.0.0
+
+servers:
+  - url: https://uat.openapi-nonprod.endpoint.com
+    description: UAT environment
+  - url: https://openapi.endpoint.com
+    description: PRODUCTION environment
+
+tags:
+  - name: OAuth2.0
+    description: Identity Verification API
+  - name: Fund Transfer API
+    description: Fund Transfer API
+  - name: Error
+    description: |-
+      EndpointBank use standard HTTP status codes when returning errors.
+
+      # A. HTTP Status Code
+      | Status Code | Description |
+      |------------|-------------------|
+      |200|0K|
+      |400|Bad Request|
+      |401|Unauthorized|
+      |403|Forbidden|
+      |404|Not Found|
+      |405|Method Not Allowed|
+      |429|Too Many Requests|
+      |500|Internal Server Error|
+      |504|Gateway Timeout|
+
+      # B. Response code
+      |Error Code|Error Message|Description|
+      |----------|-------------|-----------|
+      |0000|Success|-|
+      |1001|Decrypt data fail|-|
+      |1002|Mandatory parameter : [Parameter Name]|ไม่ส่งค่า Mandatory Parameter|
+      |1003|Invalid parameter : [Parameter Name]|ค่าที่ส่งมาไม่ถูกต้องตามเงื่อนไข เช่น <br /> - field length ไม่ถูกต้อง<br /> - TransType ต้องเป็นตัวเลข<br /> - toAccountNo ไม่ใช่ตัวเลข 10 หลัก (เฉพาะ transType = 1)|
+      |1004|Unauthorized Function|Merhant ID ที่ส่งมาไม่มีสิทธิ์ใช้งาน Function นี้|
+      |1005|Duplicate trans id|merchantTransID ที่ส่งมาซ้ำกับที่มีอยู่ในระบบ|
+      |1006|Invalid request|rsTransID ที่ส่งมาไม่ตรงกับที่มีอยู่ในระบบ|
+      |1007|Undefined operative account|fromAccountNo ที่ส่งมาไม่ตรงกับ Operative Account No. ของ Merchant นี้ที่มีในระบบ|
+      |1008|Over limit amount / transaction|ผู้ฝากรายนี้ ฝากเงินเกินจำนวนเงินที่ฝากได้ต่อรายการ|
+      |1009|Over Limit amount / day|ผู้ฝากรายนี้ ฝากเงินเกินจำนวนเงินรวมที่ฝากได้ต่อวัน|
+      |1010|Over limit time / day|ผู้ฝากรายนี้ ฝากเงินเกินจำนวนครั้งที่ฝากได้ต่อวัน|
+      |1011|ID Card No. is not allow to process|ID Card No. ผู้ฝากมีปัญหา ไม่สามารถฝากเงินได้|
+      |1012|Account is not allow to process|บัญชีปลายทางมีปัญหา ไม่สามารถรับโอนได้|
+      |1013|ID Card No not match with Account No|ID Card No. ของผู้โอน และของผู้รับโอน ต้องเป็นค่าเดียวกัน (ตรวจสอบเฉพาะ Merchant ที่มีการกาหนดค่าไว้ที่ระบบ Back Office)|
+      |1014|Over limit time / day / merchant|Merchant รายนี้ ฝากเงินเกินจำนวนเงินรวมที่ฝากได้ต่อวัน|
+      |4000|Bank account is not allow to process|หมายเลขบัญชี ไม่อยู่ในสถานะที่รับเงินได้|
+      |4001|ACCOUNT DOES NOT EXIST|ACCOUNT DOES NOT EXIST|ไม่มีบัญชีนี้ในระบบ|
+      |4002|System error|รายการไม่สำเร็จ แนะนำให้ส่งรายการเข้ามาใหม่|
+      |4004|Bank account is not allow to process|Bank account is not allow to process|
+      |4005|UNABLE TO PROCESS|UNABLE TO PROCESS|รายการไม่สำเร็จ|
+      |4006|INSUFFICIENT BALANCE|INSUFFICIENT BALANCE|
+      |4007|ACCOUNT IS CLOSED|ACCOUNT CLOSED บัญชีปิด|
+      |9999|Other Exception|Internal System Error
+
+paths:
+  /v2/oauth/token:
+    post:
+      tags:
+        - OAuth2.0
+      summary: Generate Token
+      description: Generate Token
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            maxLength: 100
+            example: 'application/x-www-form-urlencoded'
+          required: true
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            maxLength: 100
+            example: 'Basic {{YOUR_CREDENTIALS}}'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/generateToken'
+      responses:
+        '200':
+          description: Response OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/respGenerateToken'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Token Generate Error:
+                  value:
+                    code: 'openapi_error'
+                    message: 'OAuth2.0 Token Generate Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid API Key:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid API Key'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Access Denied:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Denied'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Rate limit quota violation. Quota limit  exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Rate limit quota violation. Quota limit exceeded.'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Unresolved variable:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Unresolved variable : request.header.Authorization'
+                Failed:The quota limit was exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The quota limit was exceeded'
+                Failed:Invalid Request Format:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Request Format'
+  /v2/oauth/revoke:
+    post:
+      tags:
+        - OAuth2.0
+      summary: Revoke Token
+      description: Revoke Token
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            maxLength: 100
+            example: 'Basic {{YOUR_CREDENTIALS}}'
+          required: true
+        - in: header
+          name: token
+          schema:
+            type: string
+            maxLength: 100
+            example: '{{YOUR_TOKEN}}'
+          required: true
+      responses:
+        '200':
+          description: Response OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Access Token:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Access Token'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid API Key:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid API Key'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Access Denied:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Denied'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:The rate limit is exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The rate limit is exceeded'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Access Token expired:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Token expired'
+                Failed:Unresolved variable:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Unresolved variable : request.header.Authorization'
+                Failed:Failed to resolve token:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Failed to resolve token variable request.header.token'
+                Failed:The quota limit was exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The quota limit was exceeded'
+  /v2/oauth/info:
+    get:
+      tags:
+        - OAuth2.0
+      summary: Get Information Token
+      description: Get Information Token
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            maxLength: 100
+            example: 'Basic {{YOUR_CREDENTIALS}}'
+          required: true
+        - in: header
+          name: token
+          schema:
+            type: string
+            maxLength: 100
+            example: '{{YOUR_TOKEN}}'
+          required: true
+      responses:
+        '200':
+          description: Response OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/respGenInformation'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Access Token:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Access Token'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid API Key:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid API Key'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Access Denied:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Denied'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:The rate limit is exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The rate limit is exceeded'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Access Token not approved:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Token not approved'
+                Failed:Access Token expired:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Token expired'
+                Failed:Unresolved variable:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Unresolved variable : request.header.Authorization'
+                Failed:Failed to resolve token:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Failed to resolve token variable request.header.token'
+                Failed:The quota limit was exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The quota limit was exceeded'
+
+  /v1/fundtransfer/verifydata:
+    post:
+      tags:
+        - Fund Transfer API
+      summary: Inquiry Account
+      description: Partner call EndpointBank to verify data of depositor and receipient
+      security:
+        - OAuth2.0 client credential: []
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            maxLength: 100
+            example: 'application/json'
+          required: true
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            maxLength: 100
+            example: 'Bearer {{YOUR_TOKEN}}'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reqInquiryAccount'
+      responses:
+        '200':
+          description: Response OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/respInquiryAccount'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Request Format:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Request Format'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Access Token:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Access Token'
+                Failed:Access Token expired:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Token expired'
+                Failed:Invalid API call as no apiproduct match found:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid API call as no apiproduct match found'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Access Denied:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Denied'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Path:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Path'
+        '405':
+          description: Method Not Acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:method is not allowed:
+                  value:
+                    code: 'openapi_error'
+                    message: 'method is not allowed'
+
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:The rate limit is exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The rate limit is exceeded'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Threat Detected:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Threat Detected'
+                Failed:Access Backend Server Error:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Backend Server Error'
+                Failed:The quota limit was exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The quota limit was exceeded'
+        '504':
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Threat Detected:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Gateway Timeout'
+  /v1/fundtransfer/fundtransfer:
+    post:
+      tags:
+        - Fund Transfer API
+      summary: Fund Transfer
+      description: Partner call EndpointBank to confirm fund transfer’s transaction.
+      security:
+        - OAuth2.0 client credential: []
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            maxLength: 100
+            example: 'application/json'
+          required: true
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            maxLength: 100
+            example: 'Bearer {{YOUR_TOKEN}}'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reqFundTransfer'
+      responses:
+        '200':
+          description: Response OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/respFundTransfer'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Request Format:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Request Format'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Access Token:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Access Token'
+                Failed:Access Token expired:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Token expired'
+                Failed:Invalid API call as no apiproduct match found:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid API call as no apiproduct match found'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Access Denied:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Denied'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Path:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Path'
+        '405':
+          description: Method Not Acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:method is not allowed:
+                  value:
+                    code: 'openapi_error'
+                    message: 'method is not allowed'
+
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:The rate limit is exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The rate limit is exceeded'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Threat Detected:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Threat Detected'
+                Failed:Access Backend Server Error:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Backend Server Error'
+                Failed:The quota limit was exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The quota limit was exceeded'
+        '504':
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Threat Detected:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Gateway Timeout'
+  /v1/fundtransfer/inqtxnstatus:
+    post:
+      tags:
+        - Fund Transfer API
+      summary: Inquiry Status
+      description: Partner call inqTxnStatus to check fund transfer transaction status.
+      security:
+        - OAuth2.0 client credential: []
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            maxLength: 100
+            example: 'application/json'
+          required: true
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            maxLength: 100
+            example: 'Bearer {{YOUR_TOKEN}}'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reqInquiryStatus'
+      responses:
+        '200':
+          description: Response OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/respInquiryStatus'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Request Format:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Request Format'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Access Token:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Access Token'
+                Failed:Access Token expired:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Token expired'
+                Failed:Invalid API call as no apiproduct match found:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid API call as no apiproduct match found'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Access Denied:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Access Denied'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Invalid Path:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Invalid Path'
+        '405':
+          description: Method Not Acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:method is not allowed:
+                  value:
+                    code: 'openapi_error'
+                    message: 'method is not allowed'
+
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:The rate limit is exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The rate limit is exceeded'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Threat Detected:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Threat Detected'
+                Failed:Access Backend Server Error:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Backend Server Error'
+                Failed:The quota limit was exceeded:
+                  value:
+                    code: 'openapi_error'
+                    message: 'The quota limit was exceeded'
+        '504':
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericOpenApiResponse_Fail'
+              examples:
+                Failed:Threat Detected:
+                  value:
+                    code: 'openapi_error'
+                    message: 'Gateway Timeout'
+
+components:
+  schemas:
+    generateToken:
+      required:
+        - grant_type
+      properties:
+        grant_type:
+          type: string
+          description: The grant type associated with the request. Value must be “client_credentials”
+          example: client_credentials
+    respGenerateToken:
+      required:
+        - token_type
+        - client_id
+        - access_token
+        - scope
+        - expires_in
+        - status
+      properties:
+        developer.email:
+          type: string
+          description: Email of developer.
+          example: ''
+        token_type:
+          type: string
+          description: The token type associated with the request.
+          example: Bearer
+        client_id:
+          type: string
+          description: The client ID of the registered client app.
+          example: 'a2FzaWtvcm5iYW5rdXNlcg=='
+        access_token:
+          type: string
+          description: The access token that is being verified.
+          example: 'a2FzaWtvcm5iYW5rdG9rZW4='
+        scope:
+          type: string
+          description: The scope (if any) associated with the access token.
+          example: ''
+        expires_in:
+          type: string
+          description: >
+            The expiration time for the access token. Expressed in seconds.
+          example: '1799'
+        status:
+          type: string
+          description: The status of the access token (e.g., approved or revoked).
+          example: 'approved'
+    respGenInformation:
+      required:
+        - token_type
+        - client_id
+        - access_token
+        - scope
+        - expires_in
+        - status
+      properties:
+        token_type:
+          type: string
+          description: The token type associated with the request.
+          example: Bearer
+        client_id:
+          type: string
+          description: The client ID of the registered client app.
+          example: 'a2FzaWtvcm5iYW5rdXNlcg=='
+        access_token:
+          type: string
+          description: The access token that is being verified.
+          example: 'a2FzaWtvcm5iYW5rdG9rZW4='
+        scope:
+          type: string
+          description: The scope (if any) associated with the access token.
+          example: ''
+        expires_in:
+          type: string
+          description: The expiration time for the access token. Expressed in seconds.
+          example: '1799'
+        status:
+          type: string
+          description: The status of the access token (e.g., approved or revoked).
+          example: 'approved'
+    reqInquiryAccount:
+      required:
+        - 'merchantID'
+        - 'requestDateTime'
+        - 'transType'
+        - 'merchantTransID'
+        - 'proxyType'
+        - 'proxyValue'
+        - 'fromAccountNo'
+        - 'senderName'
+        - 'senderTaxID'
+        - 'terminalNo'
+        - 'retrievalReferenceNumber'
+        - 'toBankCode'
+        - 'amount'
+        - 'typeOfSender'
+      properties:
+        merchantID:
+          maxLength: 20
+          type: string
+          description: Merchant ID for each partner.
+          example: 'XXXX'
+        requestDateTime:
+          type: string
+          pattern: yyyy-MM-ddTHH:mm:ss:SSS+07:00
+          description: Date Time of request.
+          example: '2020-06-19T16:39:46.905+07:00'
+        transType:
+          maxLength: 3
+          type: string
+          enum:
+            - 'K2K'
+            - 'K2O'
+          description: |-
+            Service transaction Type.
+            - K2K: EndpointBank Account
+            - K2O: Other Bank Account
+          example: 'K2O'
+        merchantTransID:
+          maxLength: 39
+          type: string
+          pattern: <merchantID>_<YYYYMMDD>_<Unique ID>
+          description: Unique TransactionID from Merchant.
+          example: 'XXXX_20080215_000000000000102'
+        proxyType:
+          maxLength: 2
+          type: string
+          enum:
+            - '01'
+            - '02'
+            - '10'
+          description: |-
+            Receiving Proxy Type
+            - 01: Citizen ID
+            - 02: Mobile Number
+            - 10: Account Number
+          example: '01'
+        proxyValue:
+          maxLength: 13
+          type: string
+          description: |-
+            Receiving Proxy Value
+            - Citizen ID: 13 Digit
+            - Mobile Number: 10 Digit
+            - Account Number: 10 Digit
+          example: '9999999999999'
+        fromAccountNo:
+          maxLength: 10
+          type: string
+          description: Merchant's account number for debiting.
+        senderName:
+          maxLength: 50
+          type: string
+          description: From Customer name.
+          example: 'สมชาย รักเมืองไทย'
+        senderTaxID:
+          maxLength: 13
+          type: string
+          description: TAX identification or National ID for sender (AMLO information).
+        terminalNo:
+          maxLength: 16
+          pattern: <merchantID><RunningNo>
+          type: string
+          description: Terminal ID.
+          example: 'MXXX000000000001'
+        retrievalReferenceNumber:
+          maxLength: 12
+          pattern: YDDDHHnnnnnn
+          type: string
+          description: merchant’s System Transaction Reference Number to communicate with customers
+        toBankCode:
+          maxLength: 3
+          type: string
+          description: |-
+            Extended Target Bank Code.
+            <a href="#tag/Appendix">Please see Appendix A.Bank Code</a>
+          example: '025'
+        amount:
+          maxLength: 18
+          format: Double
+          pattern: two decimal places
+          type: string
+          description: |-
+            Transfer Amount
+            - Format : 000000000000000.00
+          example: '2000.00'
+        typeOfSender:
+          maxLength: 1
+          type: string
+          enum:
+            - K
+          description: Prompt Pay Type of Sender (Fix K)
+          example: 'K'
+    respInquiryAccount:
+      required:
+        - 'merchantID'
+        - 'responseDateTime'
+        - 'transType'
+        - 'merchantTransID'
+        - 'proxyType'
+        - 'proxyValue'
+        - 'fromAccountNo'
+        - 'senderName'
+        - 'senderTaxID'
+        - 'terminalNo'
+        - 'retrievalReferenceNumber'
+        - 'toBankCode'
+        - 'amount'
+        - 'typeOfSender'
+        - 'rsTransID'
+        - 'responseCode'
+        - 'responseMsg'
+        - 'toAccNameTH'
+        - 'toAccNameEN'
+        - 'toTaxID'
+      properties:
+        merchantID:
+          maxLength: 20
+          type: string
+          description: Merchant ID for each partner.
+          example: 'XXXX'
+        responseDateTime:
+          pattern: yyyy-MM-ddTHH:mm:ss:SSS+07:00
+          type: string
+          description: Date Time of response.
+          example: '2020-06-19T16:39:46.905+07:00'
+        transType:
+          maxLength: 3
+          type: string
+          enum:
+            - 'K2K'
+            - 'K2O'
+          description: |-
+            Service transaction Type.
+            - K2K: EndpointBank Account
+            - K2O: Other Bank Account
+          example: 'K2O'
+        merchantTransID:
+          maxLength: 39
+          type: string
+          pattern: <merchantID>_<YYYYMMDD>_<Unique ID>
+          description: Unique TransactionID from Merchant.
+          example: 'XXXX_20080215_000000000000102'
+        proxyType:
+          maxLength: 2
+          type: string
+          enum:
+            - '01'
+            - '02'
+            - '10'
+          description: |-
+            Receiving Proxy Type
+            - 01: Citizen ID
+            - 02: Mobile Number
+            - 10: Account Number
+          example: '01'
+        proxyValue:
+          maxLength: 13
+          type: string
+          description: |-
+            Receiving Proxy Value
+            - Citizen ID: 13 Digit
+            - Mobile Number: 10 Digit
+            - Account Number: 10 Digit
+          example: '9999999999999'
+        fromAccountNo:
+          maxLength: 10
+          type: string
+          description: Merchant's account number for debiting.
+        senderName:
+          maxLength: 50
+          type: string
+          description: From Customer name.
+          example: 'สมชาย รักเมืองไทย'
+        senderTaxID:
+          maxLength: 13
+          type: string
+          description: TAX identification or National ID for sender (AMLO information).
+        terminalNo:
+          maxLength: 16
+          pattern: <merchantID><RunningNo>
+          type: string
+          description: Terminal ID.
+          example: 'MXXX000000000001'
+        retrievalReferenceNumber:
+          maxLength: 12
+          pattern: YDDDHHnnnnnn
+          type: string
+          description: merchant’s System Transaction Reference Number to communicate with customers
+        toBankCode:
+          maxLength: 3
+          type: string
+          description: |-
+            Extended Target Bank Code. 
+            <a href="#tag/Appendix">Please see Appendix A.Bank Code</a>
+          example: '025'
+        amount:
+          maxLength: 18
+          format: Double
+          pattern: two decimal places
+          type: string
+          description: |-
+            Transfer Amount
+            - Format : 000000000000000.00
+          example: '2000.00'
+        typeOfSender:
+          maxLength: 1
+          type: string
+          enum:
+            - K
+          description: Prompt Pay Type of Sender (Fix K)
+          example: 'K'
+        rsTransID:
+          maxLength: 47
+          type: string
+          description: EndpointBank Transaction id return in verify response.
+        responseCode:
+          maxLength: 4
+          type: string
+          description: Response code.
+          example: '0000'
+        responseMsg:
+          maxLength: 256
+          type: string
+          description: Response message.
+        toAccNameTH:
+          maxLength: 180
+          type: string
+          description: Destination Account Name (Thai Name)
+        toAccNameEN:
+          maxLength: 180
+          type: string
+          description: Destination Account Name (Eng Name)
+        toTaxID:
+          maxLength: 13
+          type: string
+          description: Destination Customer Tax ID
+    reqFundTransfer:
+      required:
+        - 'merchantID'
+        - 'requestDateTime'
+        - 'merchantTransID'
+        - 'rsTransID'
+      properties:
+        merchantID:
+          maxLength: 20
+          type: string
+          description: Merchant ID for each partner.
+          example: 'XXXX'
+        requestDateTime:
+          type: string
+          pattern: yyyy-MM-ddTHH:mm:ss:SSS+07:00
+          description: Date Time of request.
+          example: '2020-06-19T16:39:46.905+07:00'
+        merchantTransID:
+          maxLength: 39
+          type: string
+          pattern: <merchantID>_<YYYYMMDD>_<Unique ID>
+          description: Unique TransactionID from Merchant.
+          example: 'XXXX_20080215_000000000000102'
+        rsTransID:
+          maxLength: 47
+          type: string
+          description: EndpointBank Transaction id return in verify response.
+        customerMobileNo:
+          maxLength: 10
+          type: string
+          description: sender's mobile number.
+        ref1:
+          maxLength: 64
+          type: string
+          description: Reference No. 1
+        ref2:
+          maxLength: 64
+          type: string
+          description: Reference No. 2
+    respFundTransfer:
+      required:
+        - 'merchantID'
+        - 'merchantTransID'
+        - 'rsTransID'
+        - 'responseDateTime'
+        - 'responseCode'
+        - 'responseMsg'
+      properties:
+        merchantID:
+          maxLength: 20
+          type: string
+          description: Merchant ID for each partner.
+          example: 'XXXX'
+        merchantTransID:
+          maxLength: 39
+          pattern: <MerchantID>_<YYYYMMDD>_<Unique ID>
+          type: string
+          description: Unique TransactionID from Merchant.
+          example: 'XXXX_20080215_000000000000102'
+        rsTransID:
+          maxLength: 47
+          type: string
+          description: EndpointBank Transaction id return in verify response.
+        responseDateTime:
+          pattern: yyyy-MM-ddTHH:mm:ss:SSS+07:00
+          type: string
+          description: Date Time of response.
+          example: '2020-06-19T16:39:46.905+07:00'
+        responseCode:
+          maxLength: 4
+          type: string
+          description: Response code.
+          example: '0000'
+        responseMsg:
+          maxLength: 256
+          type: string
+          description: Response message.
+        settlementDate:
+          pattern: MMDD
+          maxLength: 4
+          type: string
+          description: Settlement date.
+    reqInquiryStatus:
+      required:
+        - 'merchantID'
+        - 'requestDateTime'
+        - 'merchantTransID'
+        - 'rsTransID'
+      properties:
+        merchantID:
+          maxLength: 20
+          type: string
+          description: Merchant ID for each partner.
+          example: 'XXXX'
+        requestDateTime:
+          type: string
+          pattern: yyyy-MM-ddTHH:mm:ss:SSS+07:00
+          description: Date Time of request.
+          example: '2020-06-19T16:39:46.905+07:00'
+        merchantTransID:
+          maxLength: 39
+          type: string
+          pattern: <merchantID>_<YYYYMMDD>_<Unique ID>
+          description: Unique TransactionID from Merchant.
+          example: 'XXXX_20080215_000000000000102'
+        rsTransID:
+          maxLength: 47
+          type: string
+          description: EndpointBank Transaction id return in verify response.
+    respInquiryStatus:
+      required:
+        - 'merchantID'
+        - 'responseDateTime'
+        - 'merchantTransID'
+        - 'rsTransID'
+        - 'responseCode'
+        - 'responseMsg'
+        - 'txnStatus'
+      properties:
+        merchantID:
+          maxLength: 20
+          type: string
+          description: Merchant ID for each partner.
+          example: 'XXXX'
+        responseDateTime:
+          pattern: yyyy-MM-ddTHH:mm:ss:SSS+07:00
+          type: string
+          description: Date Time of response.
+          example: '2020-06-19T16:39:46.905+07:00'
+        merchantTransID:
+          maxLength: 39
+          type: string
+          pattern: <merchantID>_<YYYYMMDD>_<Unique ID>
+          description: Unique TransactionID from Merchant.
+          example: 'XXXX_20080215_000000000000102'
+        rsTransID:
+          maxLength: 47
+          type: string
+          description: EndpointBank Transaction id return in verify response.
+        responseCode:
+          maxLength: 4
+          type: string
+          description: Response code.
+          example: '0000'
+        responseMsg:
+          maxLength: 256
+          type: string
+          description: Response message.
+        txnStatus:
+          maxLength: 32
+          type: string
+          description: >
+            Transaction Status
+              - Success
+              - Fail
+              - In Process
+    GenericOpenApiResponse_Fail:
+      properties:
+        code:
+          type: string
+          description: The error code from Open-API. Normally, be fixed as openapi_error.
+          example: openapi_error
+        message:
+          type: string
+          description: Error message description generate by Open-API.
+          example: Backend Server Error
+  securitySchemes:
+    OAuth2.0 client credential:
+      type: oauth2
+      description: |-
+        <p style="word-break: break-word;">EndpointBank Open API uses OAUTH2.0 client credentials as an authorization method. 
+        When requesting a client credentials access token, you must authenticate yourself as a client. In the response, 
+        an access token is retuned. This token is used to access any APIs that EndpointBank provided. For security reasons, 
+        the validity of the token is temporary.<br/></p>
+        <p style="padding-left: 30px;">&nbsp;</p>
+        <p style="word-break: break-word;"><strong>How to work with OAuth 2.0 to get access token</strong></p>
+        <p style="word-break: break-word;">1. Client get credential as Consumer ID and Consumer Secret from EndpointBank.</p>
+        <dl>
+        <dd><small>Example:<br />Consumer ID =a2FzaWtvcm5iYW5rdXNlcg==<br />Consumer Secret =a2FzaWtvcm5iYW5rcGFzc3dvcmQ=</small></dd>
+        </dl>
+        <p style="word-break: break-word;">2. Generate a Basic Authentication format with your Consumer ID and Consumer Secret with the steps.</p>
+        <ul>
+        <li style="word-break: break-word;">Use data format&nbsp; &lt;Consumer ID&gt;:&lt;Consumer Secret&gt;<br /> 
+        <dl>
+        <dd><small>Example:<br />a2FzaWtvcm5iYW5rdXNlcg==</small>:<small>a2FzaWtvcm5iYW5rcGFzc3dvcmQ=</small></dd>
+        </dl>
+        </li>
+        <li style="word-break: break-word;">Encode data with Base64 encoder <br />
+        <dl>
+        <dd><small>Example:<br />YTJGemFXdHZjbTVpWVc1cmRYTmxjZz09OmEyRnphV3R2Y201aVlXNXJjR0Z6YzNkdmNtUT0=</small></dd>
+        </dl>
+        </li>
+        <li style="word-break: break-word;">Use encoded data to fill in the header with the format.
+        <dl>
+        <dd>Authorization : Basic &lt;Encode data with Base64&gt;<br/><br/><small>Example data:<br />Authorization : Basic YTJGemFXdHZjbTVpWVc1cmRYTmxjZz09OmEyRnphV3R2Y201aVlXNXJjR0Z6YzNkdmNtUT0=</small></dd>
+        </dl>
+        </li>
+        </ul>
+        <p style="word-break: break-word;">3. Specify&nbsp; "Content-Type: application/x-www-form-urlencoded" in header.</p>
+        <p style="word-break: break-word;">4. Specify "grant_type=client_credentials" in body.</p>
+        <p style="word-break: break-word;">5. Call POST message to EndpointBank Authentication server.</p>
+        <p style="word-break: break-word;">6. Get your access token. It is used for calling any APIs. The token is valid for 30 mins before expire.</p>
+        <p style="color:red;font-size:12px">** Please reuse access token in this period (30 mins) and don't get new token on every APIs call.</p>
+        <p style="padding-left: 30px;">&nbsp;</p>
+        <p style="word-break: break-word;"><strong>Example request message to get access token in curl command format</strong></p>
+        <p style="padding-left: 20px;"><small><em>curl --location --request POST 'https://example.endpoint.com/v2/oauth/token' \</em><br /><em> --header 'Content-Type: application/x-www-form-urlencoded' \</em><br /><em> --header 'Authorization: Basic YTJGemFXdHZjbTVpWVc1cmRYTmxjZz09OmEyRnphV3R2Y201aVlXNXJjR0Z6YzNkdmNtUT0=' \</em><br /><em> --data-urlencode 'grant_type=client_credentials'</em></small></p>
+        <p style="padding-left: 30px;">&nbsp;</p>
+
+        <p style="word-break: break-word;"><strong>Using access token to access an API</strong></p>
+        <p style="word-break: break-word;">Access token to be passed as a bearer token in Authorization header for every APIs call.</p>
+        <dl>
+        <dd>Authorization : Bearer &lt;Access token&gt;<br/><br/><small>Example:<br />Authorization : Bearer a2FzaWtvcm5iYW5rdG9rZW4=</small></dd>
+        </dl>
+        <p style="padding-left: 30px;">&nbsp;</p>
+        <p style="word-break: break-word;"><strong>Endpoint</strong></p>
+        <p style="word-break: break-word;">1. UAT environment: https://openapi-test.endpoint.com/oauth/token</p>
+        <p style="word-break: break-word;">2. PRODUCTION environment: https://openapi.endpoint.com/oauth/token</p>
+        <p style="padding-left: 30px;">&nbsp;</p>
+      flows:
+        clientCredentials:
+          tokenUrl: /v2/oauth/token
+          scopes:
+            BillPayment API: for BillPayment API Group
