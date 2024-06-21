@@ -16,7 +16,7 @@ spec:
   type: openapi
   lifecycle: production
   owner: pet
-  system: examples
+  system: cat-migration
   definition:
     $text: ../open-api/petstore.yaml
   apiProvidedBy:
