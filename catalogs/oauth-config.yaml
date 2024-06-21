@@ -14,7 +14,7 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: apim
+  owner: external-gw
   system: examples
   providesApis:
     - fund-transfer

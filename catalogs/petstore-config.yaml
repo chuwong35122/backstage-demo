@@ -15,7 +15,7 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: pet
+  owner: internal-gw
   system: cat-migration
   definition:
     $text: ../open-api/petstore.yaml
