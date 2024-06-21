@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: oauth-2.0
+  description: Authenticate to Endpoint bank with OAuth2.0
+  links:
+    - url: https://github.com/chuwong35122/backstage-demo/blob/main/catalog-info/open-api/oauth.yaml
+      title: Github repo
+      icon: github
+spec:
+  type: openapi
+  lifecycle: production
+  owner: apim
+  system: examples
+  providesApis:
+    - fund-transfer
+    - slip-verification
+  definition:
+    $text: ./open-api/oauth.yaml

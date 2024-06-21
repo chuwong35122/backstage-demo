@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: petstore-api
+  description: Get/Update/Create/Delete pet information
+  tags:
+    - team:pet
+    - internal
+    - petstore
+    - api
+spec:
+  type: openapi
+  lifecycle: production
+  owner: pet
+  system: examples
+  definition:
+    $text: ../open-api/petstore.yaml
+  apiProvidedBy:
+    - oauth-2.0

@@ -15,3 +15,39 @@ metadata:
 spec:
   type: team
   children: []
+---
+# This is an external-gw group.
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: external-gw
+spec:
+  type: team
+  children: []
+---
+# This is a 'team' user. This user is a member of the 'external-gw' group.
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: apim
+spec:
+  memberOf: [external-gw]
+---
+# This is an internal-gw group.
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: internal-gw
+spec:
+  type: team
+  children: []
+---
+# This is a 'team' user. This user is a member of the 'external-gw' group.
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: pet
+spec:
+  memberOf: [internal-gw]
+---
+
