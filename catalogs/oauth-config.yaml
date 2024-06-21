@@ -20,4 +20,4 @@ spec:
     - fund-transfer
     - slip-verification
   definition:
-    $text: ./open-api/oauth.yaml
+    $text: ../open-api/oauth.yaml
