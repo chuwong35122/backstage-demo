@@ -1,14 +1,3 @@
----
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
-apiVersion: backstage.io/v1alpha1
-kind: Domain
-metadata:
-  name: payment
-  description: Payment domain of the ACME company.
-spec:
-  owner: acme
-  subdomainOf: acme
----
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
 # System
 apiVersion: backstage.io/v1alpha1
@@ -25,7 +14,8 @@ metadata:
   description: OpenAPI system for managing external APIs.
 spec:
   owner: apim
-  # domain: extenal-gw
+  domain: extenal-gw
+  depe
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -34,77 +24,7 @@ metadata:
   description: Credit scorer system for scoring credit of customers.
 spec:
   owner: credit
-  # domain: internal-gw
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: authentication
-  description: Authentication system for external gateway between for external users.
-spec:
-  owner: apim
-  system: examples
-  domain: external-gw
-  type: service
-  providesApi:
-    - oauth-2-api
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: slip-verification
-  description: Slip verification system for verifying slip payment from ACME Corp.
-spec:
-  owner: apim
-  domain: external-gw
-  type: service
-  consumesApi:
-    - oauth-2
-  providesApi:
-    - slip-verification-api
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: fund-transfer
-  description: Fund transfer system for transferring funds between accounts.
-spec:
-  owner: apim
-  domain: external-gw
-  type: service
-  system: examples
-  consumesApi:
-    - oauth-2
-  providesApi:
-    - fund-transfer-api
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: fraud-detection
-  description: Fraud detection system for detecting fraudulent activities between transaction.
-spec:
-  owner: channel
-  domain: external-gw
-  type: service
-  system: examples
-  consumesApi:
-    - oauth-2-api
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: credit-scoring
-  description: Credit scoring system for scoring credit of customers.
-spec:
-  owner: leasing
   domain: internal-gw
-  type: service
-  system: examples
-  consumesApi:
-    - oauth-2
-  providesApi:
-    - petstore-api
 ---
 # Resource
 apiVersion: backstage.io/v1alpha1
@@ -114,7 +34,7 @@ metadata:
   description: Google's API management gateway.
 spec:
   type: kubernetes-cluster
-  owner: payment
+  owner: apim
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Resource
@@ -136,6 +56,84 @@ spec:
   owner: guests
   system: examples
   providesApis: [example-grpc-api]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: authentication
+  description: Authentication system for external gateway between for external users.
+spec:
+  owner: apim
+  lifecycle: production
+  system: a-api
+  domain: external-gw
+  type: service
+  providesApis: [oauth-2-api]
+  dependsOn:
+    - apigee
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: slip-verification
+  description: Slip verification system for verifying slip payment from ACME Corp.
+spec:
+  owner: apim
+  lifecycle: production
+  system: a-api
+  domain: external-gw
+  type: service
+  consumesApi: [oauth-2-api]
+  providesApi: [slip-verification-api]
+  dependsOn:
+    - apigee
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: fund-transfer
+  description: Fund transfer system for transferring funds between accounts.
+spec:
+  owner: apim
+  lifecycle: production
+  domain: external-gw
+  type: service
+  system: a-api
+  consumesApi: [oauth-2-api]
+  providesApi: [fund-transfer-api]
+  dependsOn:
+    - apigee
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: fraud-detection
+  description: Fraud detection system for detecting fraudulent activities between transaction.
+spec:
+  owner: channel
+  lifecycle: production
+  domain: external-gw
+  type: service
+  system: a-api
+  consumesApi: [oauth-2-api]
+  dependsOn:
+    - apigee
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: credit-scoring
+  description: Credit scoring system for scoring credit of customers.
+spec:
+  owner: leasing
+  lifecycle: production
+  domain: internal-gw
+  type: service
+  system: creditscorer
+  consumesApi: [oauth-2-api]
+  providesApi: [petstore-api]
+  dependsOn:
+    - apigee
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
 apiVersion: backstage.io/v1alpha1
