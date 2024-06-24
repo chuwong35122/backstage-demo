@@ -4,8 +4,9 @@ metadata:
   name: oauth-2.0
   description: Authenticate to Endpoint bank with OAuth2.0
   tags:
-    - external
-    - authentication
+    - oauth
+    - external-gw
+    - oauth-2.0-v1.0.2
   links:
     - url: https://github.com/chuwong35122/backstage-demo/blob/main/open-api/oauth.yaml
       title: Github repo

@@ -5,7 +5,7 @@ metadata:
   description: Create fund transfer from Endpoint Bank to another
   tags:
     - fund-transfer
-    - banking
+    - fund-t-2020-v1.0.19
   links:
     - url: https://github.com/chuwong35122/backstage-demo/blob/main/open-api/fund-transfer.yaml
       title: Github repo

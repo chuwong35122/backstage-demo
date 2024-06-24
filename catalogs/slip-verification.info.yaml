@@ -4,8 +4,8 @@ metadata:
   name: slip-verification
   description: Verify slip playment from Endpoint Bank
   tags:
-    - slip
-    - verify
+    - slip-verfication
+    - sv-2021-v1.0.12
   links:
     - url: https://github.com/chuwong35122/backstage-demo/blob/main/catalog-info/open-api/slip-verification.yaml
       title: Github repo
