@@ -22,3 +22,6 @@ spec:
     - oauth-2.0
   apiConsumedBy:
     - fraud-detection
+  subcomponentOf:
+    - apigee
+    - database
