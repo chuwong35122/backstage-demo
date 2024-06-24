@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: fund-transfer
+  name: fund-transfer-api
   description: Create fund transfer from Endpoint Bank to another
   tags:
     - fund-transfer
@@ -14,12 +14,7 @@ spec:
   type: openapi
   lifecycle: production
   owner: apim
-  system: fund-transfer
+  system: openapi
   domain: external-gw
-  consumesApis:
-    - oauth-2
-  providesApis:
-    - fund-transfer
-  dependsOn: ['resource:apigee', 'resource:database']
   definition:
     $text: ../open-api/fund-transfer.yaml

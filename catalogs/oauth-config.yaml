@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: oauth-2
+  name: oauth-2-api
   description: Authenticate to Endpoint bank with OAuth2.0
   tags:
     - oauth-2
@@ -13,12 +13,6 @@ spec:
   type: openapi
   lifecycle: production
   owner: apim
-  system: authentication
-  apiConsumedBy:
-    - fund-transfer
-    - slip-verification
-  providesApis:
-    - oauth-2
-  dependsOn: ['resource:apigee', 'resource:database']
+  system: openapi
   definition:
     $text: ../open-api/oauth.yaml

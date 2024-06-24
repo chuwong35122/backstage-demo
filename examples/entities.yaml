@@ -10,6 +10,7 @@ spec:
   subdomainOf: acme
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+# System
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
@@ -20,26 +21,49 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
+  name: openapi
+spec:
+  owner: apim
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: openapi
+spec:
+  owner: credit-scoring
+---
+# Component
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: examples
+spec:
+  owner: guests
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: authentication
   description: Authentication system for external gateway between for external users.
 spec:
   owner: apim
   domain: external-gw
-  dependsOn:
-    - resource:default/database
-    - resource:default/apigee
+  providesApi:
+    - oauth-2-api
+
 ---
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: Component
 metadata:
   name: slip-verification
   description: Slip verification system for verifying slip payment from ACME Corp.
 spec:
   owner: apim
   domain: external-gw
-  dependsOn:
-    - resource:default/database
-    - resource:default/apigee
+  consumesApi:
+    - oauth-2
+  providesApi:
+    - slip-verification-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -49,9 +73,10 @@ metadata:
 spec:
   owner: apim
   domain: external-gw
-  dependsOn:
-    - resource:default/database
-    - resource:default/apigee
+  consumesApi:
+    - oauth-2
+  providesApi:
+    - fund-transfer-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -61,6 +86,8 @@ metadata:
 spec:
   owner: channel
   domain: external-gw
+  consumesApi:
+    - oauth-2-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -70,7 +97,12 @@ metadata:
 spec:
   owner: leasing
   domain: internal-gw
+  consumesApi:
+    - oauth-2
+  providesApi:
+    - petstore-api
 ---
+# Resource
 apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
