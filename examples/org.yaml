@@ -70,7 +70,7 @@ spec:
   children: [credit]
 ---
 ################################
-##### External-GW Domain  ######
+#####       Domain        ######
 ################################
 
 apiVersion: backstage.io/v1alpha1
@@ -81,14 +81,26 @@ spec:
   type: domain
   children: []
 ---
-################################
-##### Internal-GW Domain  ######
-################################
-
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: internal-gw
+spec:
+  type: domain
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: domain
+spec:
+  type: domain
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: legacy
 spec:
   type: domain
   children: []
