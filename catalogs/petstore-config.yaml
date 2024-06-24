@@ -2,12 +2,10 @@ apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: petstore-api
-  description: Get/Update/Create/Delete pet information
+  description: Get/Update/Create/Delete pet information for credit scoring
   tags:
-    - team:pet
     - internal
     - petstore
-    - api
   links:
     - url: https://github.com/chuwong35122/backstage-demo/blob/main/open-api/petstore.yaml
       title: Github repo
@@ -15,9 +13,9 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: internal-gw
-  system: cat-migration
+  owner: credit
+  system: credit-scoring
   definition:
-    $text: ../open-api/petstore.yaml
+    $text: ./open-api/petstore.yaml
   apiProvidedBy:
     - oauth-2.0
