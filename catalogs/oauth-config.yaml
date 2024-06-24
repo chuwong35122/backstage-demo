@@ -13,6 +13,6 @@ spec:
   type: openapi
   lifecycle: production
   owner: apim
-  system: examples
+  system: a-api
   definition:
     $text: ../open-api/oauth.yaml
