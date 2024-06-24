@@ -20,6 +20,3 @@ spec:
     - oauth-2.0
   definition:
     $text: ../open-api/fund-transfer.yaml
-  subcomponentOf:
-    - apigee
-    - database

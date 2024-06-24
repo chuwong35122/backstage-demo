@@ -25,6 +25,9 @@ metadata:
 spec:
   owner: apim
   domain: external-gw
+  dependsOn:
+    - resource:default/database
+    - resource:default/apigee
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -34,6 +37,9 @@ metadata:
 spec:
   owner: apim
   domain: external-gw
+  dependsOn:
+    - resource:default/database
+    - resource:default/apigee
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -43,6 +49,9 @@ metadata:
 spec:
   owner: apim
   domain: external-gw
+  dependsOn:
+    - resource:default/database
+    - resource:default/apigee
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
