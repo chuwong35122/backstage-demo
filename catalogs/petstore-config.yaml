@@ -5,7 +5,7 @@ metadata:
   description: Get/Update/Create/Delete pet information for credit scoring
   tags:
     - internal
-    - petstore-2010-v1.0.0
+    - pet-2125
   links:
     - url: https://github.com/chuwong35122/backstage-demo/blob/main/open-api/petstore.yaml
       title: Github repo
