@@ -131,7 +131,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: User
 metadata:
-  name: B.P.
+  name: ban
 spec:
   profile:
     picture: https://api.dicebear.com/7.x/avataaars/svg?seed=oas&backgroundColor=transparent
@@ -143,18 +143,18 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: User
 metadata:
-  name: C.A.
+  name: cha
 spec:
   profile:
     picture: https://api.dicebear.com/7.x/avataaars/svg?seed=s&backgroundColor=transparent
-    email: ca@example.com
+    email: cha@example.com
   memberOf: [apim, acme-corp, payment]
 ---
 # Apim Team member
 apiVersion: backstage.io/v1alpha1
 kind: User
 metadata:
-  name: L.P.
+  name: luna
   picture: https://api.dicebear.com/7.x/avataaars/svg?seed=Luna&backgroundColor=transparent
 spec:
   profile:
