@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: oauth-2-api
-  description: Authenticate to Endpoint bank with OAuth2.0
+  description: Authenticate to ACME corp with OAuth2.0
   tags:
     - oauth-2
   links:
@@ -13,6 +13,6 @@ spec:
   type: openapi
   lifecycle: production
   owner: apim
-  system: openapi
+  system: apim-openapi
   definition:
     $text: ../open-api/oauth.yaml

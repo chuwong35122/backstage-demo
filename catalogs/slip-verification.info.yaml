@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: slip-verification-api
-  description: Verify slip playment from Endpoint Bank
+  description: Verify slip playment from ACME corp
   tags:
     - slip-verfication-api
     - sv-1234
@@ -15,6 +15,6 @@ spec:
   lifecycle: production
   owner: apim
   domain: external-gw
-  system: openapi
+  system: apim-openapi
   definition:
     $text: ../open-api/slip-verification.yaml

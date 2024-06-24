@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: fund-transfer-api
-  description: Create fund transfer from Endpoint Bank to another
+  description: Create fund transfer from ACME corp to another
   tags:
     - fund-transfer
     - ft-2020
@@ -14,7 +14,7 @@ spec:
   type: openapi
   lifecycle: production
   owner: apim
-  system: openapi
+  system: apim-openapi
   domain: external-gw
   definition:
     $text: ../open-api/fund-transfer.yaml

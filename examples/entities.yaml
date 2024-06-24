@@ -22,15 +22,19 @@ apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: openapi
+  description: OpenAPI system for managing external APIs.
 spec:
   owner: apim
+  domain: extenal-gw
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: credit-scorer
+  name:
+  description: Credit scorer system for scoring credit of customers.
 spec:
   owner: credit-scoring
+  domain: internal-gw
 ---
 # Component
 apiVersion: backstage.io/v1alpha1
