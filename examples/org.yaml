@@ -105,7 +105,12 @@ metadata:
   description: API Management team within the payment department.
 spec:
   type: team
+  profile:
+    displayName: API Management
+    email: apim.contact@example.com
+    picture: https://api.dicebear.com/9.x/initials/svg?seed=APIM
   memberOf: [payment]
+  children: []
 ---
 # Team within leasing
 apiVersion: backstage.io/v1alpha1
@@ -115,7 +120,12 @@ metadata:
   description: Credit scoring team within the leasing department.
 spec:
   type: team
+  profile:
+    displayName: Credit Scoring
+    email: creditscoring.contact@example.com
+    picture: https://api.dicebear.com/9.x/initials/svg?seed=CS
   memberOf: [leasing]
+  children: []
 ---
 # Apim Team member
 apiVersion: backstage.io/v1alpha1
@@ -123,6 +133,9 @@ kind: User
 metadata:
   name: B.P.
 spec:
+  profile:
+    picture: https://api.dicebear.com/7.x/avataaars/svg?seed=oas&backgroundColor=transparent
+    email: bp@example.com
   type: user
   memberOf: [apim, acme-corp, payment]
 ---
@@ -132,7 +145,9 @@ kind: User
 metadata:
   name: C.A.
 spec:
-  type: user
+  profile:
+    picture: https://api.dicebear.com/7.x/avataaars/svg?seed=s&backgroundColor=transparent
+    email: ca@example.com
   memberOf: [apim, acme-corp, payment]
 ---
 # Apim Team member
@@ -140,8 +155,11 @@ apiVersion: backstage.io/v1alpha1
 kind: User
 metadata:
   name: L.P.
+  picture: https://api.dicebear.com/7.x/avataaars/svg?seed=Luna&backgroundColor=transparent
 spec:
-  type: user
+  profile:
+    picture: https://api.dicebear.com/7.x/avataaars/svg?seed=s&backgroundColor=transparent
+    email: lp@example.com
   memberOf: [leasing, acme-corp, credit]
 ---
 
