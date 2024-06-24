@@ -14,7 +14,7 @@ spec:
   type: openapi
   lifecycle: production
   owner: apim
-  system: apimopenapi
+  system: a-api
   domain: external-gw
   definition:
     $text: ../open-api/fund-transfer.yaml

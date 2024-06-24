@@ -21,7 +21,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: apimopenapi
+  name: a-api
   description: OpenAPI system for managing external APIs.
 spec:
   owner: apim
@@ -33,16 +33,8 @@ metadata:
   name: creditscorer
   description: Credit scorer system for scoring credit of customers.
 spec:
-  owner: credit-scoring
+  owner: credit
   domain: internal-gw
----
-# Component
-apiVersion: backstage.io/v1alpha1
-kind: System
-metadata:
-  name: examples
-spec:
-  owner: guests
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
@@ -52,9 +44,9 @@ metadata:
 spec:
   owner: apim
   domain: external-gw
+  type: service
   providesApi:
     - oauth-2-api
-
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
@@ -64,43 +56,47 @@ metadata:
 spec:
   owner: apim
   domain: external-gw
+  type: service
   consumesApi:
     - oauth-2
   providesApi:
     - slip-verification-api
 ---
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: Component
 metadata:
   name: fund-transfer
   description: Fund transfer system for transferring funds between accounts.
 spec:
   owner: apim
   domain: external-gw
+  type: service
   consumesApi:
     - oauth-2
   providesApi:
     - fund-transfer-api
 ---
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: Component
 metadata:
   name: fraud-detection
   description: Fraud detection system for detecting fraudulent activities between transaction.
 spec:
   owner: channel
   domain: external-gw
+  type: service
   consumesApi:
     - oauth-2-api
 ---
 apiVersion: backstage.io/v1alpha1
-kind: System
+kind: Component
 metadata:
   name: credit-scoring
   description: Credit scoring system for scoring credit of customers.
 spec:
   owner: leasing
   domain: internal-gw
+  type: service
   consumesApi:
     - oauth-2
   providesApi:
