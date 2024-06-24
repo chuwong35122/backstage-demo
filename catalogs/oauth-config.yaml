@@ -1,11 +1,10 @@
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: oauth-2
+  name: oauth-2.0
   description: Authenticate to Endpoint bank with OAuth2.0
   tags:
-    - oauth
-    - oauth-2.0
+    - oauth-2
   links:
     - url: https://github.com/chuwong35122/backstage-demo/blob/main/open-api/oauth.yaml
       title: Github repo
