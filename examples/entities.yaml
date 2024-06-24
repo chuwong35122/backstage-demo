@@ -1,13 +1,29 @@
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
 apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: payment
+  description: Payment domain of the ACME company.
+spec:
+  owner: acme
+  subdomainOf: acme
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: examples
 spec:
   owner: guests
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: authentication
+spec:
+  owner: apim
+---
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
@@ -15,7 +31,6 @@ metadata:
 spec:
   owner: apim
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
@@ -23,13 +38,19 @@ metadata:
 spec:
   owner: apim
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: cat-migration
+  name: fraud-detection
 spec:
-  owner: pet
+  owner: channel
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: credit-scoring
+spec:
+  owner: leasing
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
 apiVersion: backstage.io/v1alpha1

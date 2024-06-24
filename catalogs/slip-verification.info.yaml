@@ -6,7 +6,6 @@ metadata:
   tags:
     - slip
     - verify
-    - team:apim
   links:
     - url: https://github.com/chuwong35122/backstage-demo/blob/main/catalog-info/open-api/slip-verification.yaml
       title: Github repo
@@ -14,11 +13,10 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: external-gw
+  owner: apim
+  domain: external-gw
   system: slip-verification
-  apiProvidedBy:
+  consumesApi: # meaning that it depends on endpoints of the API.
     - oauth-2.0
-  providesApis:
-    - petstore-api
   definition:
     text: ./open-api/slip-verification.yaml

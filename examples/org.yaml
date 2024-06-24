@@ -16,38 +16,103 @@ spec:
   type: team
   children: []
 ---
-# This is an external-gw group.
+################
+# ACME Corp.   #
+################
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: acme-corp
+  description: ACME Corporation
+  links:
+    - url: https://acme-corp.com
+      title: ACME Corporation
+spec:
+  type: organization
+  profile:
+    displayName: ACME Corp
+    email: contact.acme@example.com
+    picture: https://static.wikia.nocookie.net/fictionalcompanies/images/c/c2/ACME_Corporation.png/revision/latest?cb=20230628025220
+  children: [payment, channel, leasing]
+---
+################################
+### ACME Corp's Departments  ###
+################################
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: payment
+  description: The payment department within ACME Corp.
+spec:
+  type: department
+  parent: acme-corp
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: channel
+  description: The customer channel department within ACME Corp.
+spec:
+  type: department
+  parent: acme-corp
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: leasing
+  description: The leasing department within ACME Corp.
+spec:
+  type: department
+  parent: acme-corp
+  children: []
+---
+################################
+##### External-GW Domain  ######
+################################
+
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: external-gw
 spec:
-  type: team
+  type: domain
   children: []
 ---
-# This is a 'team' user. This user is a member of the 'external-gw' group.
-apiVersion: backstage.io/v1alpha1
-kind: User
-metadata:
-  name: apim
-spec:
-  memberOf: [external-gw]
----
-# This is an internal-gw group.
+################################
+##### Internal-GW Domain  ######
+################################
+
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: internal-gw
 spec:
-  type: team
+  type: domain
   children: []
 ---
-# This is a 'team' user. This user is a member of the 'external-gw' group.
+################################
+### Team within department  ####
+################################
+
+# Team within payment
 apiVersion: backstage.io/v1alpha1
-kind: User
+kind: Group
 metadata:
-  name: pet
+  name: apim
 spec:
-  memberOf: [internal-gw]
+  type: team
+  memberOf: [payment]
+---
+# Team within leasing
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: credit
+spec:
+  type: team
+  memberOf: [leasing]
 ---
 

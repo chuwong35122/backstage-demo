@@ -4,7 +4,6 @@ metadata:
   name: oauth-2.0
   description: Authenticate to Endpoint bank with OAuth2.0
   tags:
-    - team:apim
     - external
     - authentication
   links:
@@ -14,9 +13,9 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: external-gw
-  system: examples
-  providesApis:
+  owner: apim
+  system: authentication
+  apiConsumedBy:
     - fund-transfer
     - slip-verification
   definition:
