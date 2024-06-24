@@ -115,4 +115,31 @@ spec:
   type: team
   memberOf: [leasing]
 ---
+# Apim Team member
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: B.P.
+spec:
+  type: user
+  memberOf: [apim, acme-corp, payment]
+---
+# Apim Team member
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: C.A.
+spec:
+  type: user
+  memberOf: [apim, acme-corp, payment]
+---
+# Apim Team member
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: L.P.
+spec:
+  type: user
+  memberOf: [leasing, acme-corp, credit]
+---
 
