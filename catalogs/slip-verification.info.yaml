@@ -19,11 +19,9 @@ spec:
   definition:
     $text: ../open-api/slip-verification.yaml
   consumesApis:
-    - oauth-2
+    - [oauth-2]
   providesApis:
     - fund-transfer
   apiConsumedBy:
     - fraud-detection
-  subcomponentOf:
-    - apigee
-    - database
+  dependsOn: ['resource:apigee', 'resource:database']

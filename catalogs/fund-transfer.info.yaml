@@ -20,5 +20,6 @@ spec:
     - oauth-2
   providesApis:
     - fund-transfer
+  dependsOn: ['resource:apigee', 'resource:database']
   definition:
     $text: ../open-api/fund-transfer.yaml

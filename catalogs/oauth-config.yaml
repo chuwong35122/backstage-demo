@@ -19,5 +19,6 @@ spec:
     - slip-verification
   providesApis:
     - oauth-2
+  dependsOn: ['resource:apigee', 'resource:database']
   definition:
     $text: ../open-api/oauth.yaml
