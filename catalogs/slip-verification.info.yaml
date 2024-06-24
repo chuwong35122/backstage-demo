@@ -19,4 +19,4 @@ spec:
   consumesApi: # meaning that it depends on endpoints of the API.
     - oauth-2.0
   definition:
-    text: ./open-api/slip-verification.yaml
+    $text: ./open-api/slip-verification.yaml

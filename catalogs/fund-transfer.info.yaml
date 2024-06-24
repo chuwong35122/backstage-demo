@@ -4,10 +4,8 @@ metadata:
   name: fund-transfer
   description: Create fund transfer from Endpoint Bank to another
   tags:
-    - fundtransfer
+    - fund-transfer
     - banking
-    - api
-    - team:apim
   links:
     - url: https://github.com/chuwong35122/backstage-demo/blob/main/open-api/fund-transfer.yaml
       title: Github repo
@@ -15,8 +13,9 @@ metadata:
 spec:
   type: openapi
   lifecycle: production
-  owner: external-gw
+  owner: apim
   system: fund-transfer
+  domain: external-gw
   apiProvidedBy:
     - oauth-2.0
   definition:
