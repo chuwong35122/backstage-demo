@@ -16,7 +16,9 @@ spec:
   owner: apim
   domain: external-gw
   system: slip-verification
-  consumesApi: # meaning that it depends on endpoints of the API.
-    - oauth-2.0
   definition:
-    $text: ./open-api/slip-verification.yaml
+    $text: ../open-api/slip-verification.yaml
+  apiProvidedBy:
+    - oauth-2.0
+  apiConsumedBy:
+    - fraud-detection

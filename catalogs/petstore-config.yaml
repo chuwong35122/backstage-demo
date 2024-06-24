@@ -16,6 +16,6 @@ spec:
   owner: credit
   system: credit-scoring
   definition:
-    $text: ./open-api/petstore.yaml
+    $text: ../open-api/petstore.yaml
   apiProvidedBy:
     - oauth-2.0
