@@ -16,7 +16,9 @@ spec:
   owner: apim
   system: fund-transfer
   domain: external-gw
-  apiProvidedBy:
+  consumesApis:
     - oauth-2.0
+  providesApis:
+    - fund-transfer
   definition:
     $text: ../open-api/fund-transfer.yaml

@@ -18,8 +18,10 @@ spec:
   system: slip-verification
   definition:
     $text: ../open-api/slip-verification.yaml
-  apiProvidedBy:
+  consumesApis:
     - oauth-2.0
+  providesApis:
+    - fund-transfer
   apiConsumedBy:
     - fraud-detection
   subcomponentOf:

@@ -18,5 +18,7 @@ spec:
   apiConsumedBy:
     - fund-transfer
     - slip-verification
+  providesApis:
+    - oauth-2.0
   definition:
     $text: ../open-api/oauth.yaml
