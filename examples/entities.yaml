@@ -25,7 +25,7 @@ metadata:
   description: OpenAPI system for managing external APIs.
 spec:
   owner: apim
-  domain: extenal-gw
+  # domain: extenal-gw
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -34,7 +34,7 @@ metadata:
   description: Credit scorer system for scoring credit of customers.
 spec:
   owner: credit
-  domain: internal-gw
+  # domain: internal-gw
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
@@ -43,6 +43,7 @@ metadata:
   description: Authentication system for external gateway between for external users.
 spec:
   owner: apim
+  system: examples
   domain: external-gw
   type: service
   providesApi:
@@ -71,6 +72,7 @@ spec:
   owner: apim
   domain: external-gw
   type: service
+  system: examples
   consumesApi:
     - oauth-2
   providesApi:
@@ -85,6 +87,7 @@ spec:
   owner: channel
   domain: external-gw
   type: service
+  system: examples
   consumesApi:
     - oauth-2-api
 ---
@@ -97,6 +100,7 @@ spec:
   owner: leasing
   domain: internal-gw
   type: service
+  system: examples
   consumesApi:
     - oauth-2
   providesApi:
