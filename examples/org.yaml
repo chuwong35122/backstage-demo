@@ -47,7 +47,7 @@ metadata:
 spec:
   type: department
   parent: acme-corp
-  children: []
+  children: [apim]
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Group
@@ -67,7 +67,7 @@ metadata:
 spec:
   type: department
   parent: acme-corp
-  children: []
+  children: [credit]
 ---
 ################################
 ##### External-GW Domain  ######
@@ -102,6 +102,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: apim
+  description: API Management team within the payment department.
 spec:
   type: team
   memberOf: [payment]
@@ -111,6 +112,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: credit
+  description: Credit scoring team within the leasing department.
 spec:
   type: team
   memberOf: [leasing]
