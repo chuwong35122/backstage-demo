@@ -21,36 +21,46 @@ apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: authentication
+  description: Authentication system for external gateway between for external users.
 spec:
   owner: apim
+  domain: external-gw
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: slip-verification
+  description: Slip verification system for verifying slip payment from ACME Corp.
 spec:
   owner: apim
+  domain: external-gw
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: fund-transfer
+  description: Fund transfer system for transferring funds between accounts.
 spec:
   owner: apim
+  domain: external-gw
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: fraud-detection
+  description: Fraud detection system for detecting fraudulent activities between transaction.
 spec:
   owner: channel
+  domain: external-gw
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: credit-scoring
+  description: Credit scoring system for scoring credit of customers.
 spec:
   owner: leasing
+  domain: internal-gw
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
 apiVersion: backstage.io/v1alpha1
