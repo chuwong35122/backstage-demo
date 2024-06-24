@@ -149,7 +149,7 @@ spec:
     picture: https://api.dicebear.com/7.x/avataaars/svg?seed=oas&backgroundColor=transparent
     email: bp@example.com
   type: user
-  memberOf: [apim, acme-corp, payment]
+  memberOf: [apim]
 ---
 # Apim Team member
 apiVersion: backstage.io/v1alpha1
@@ -160,7 +160,7 @@ spec:
   profile:
     picture: https://api.dicebear.com/7.x/avataaars/svg?seed=s&backgroundColor=transparent
     email: cha@example.com
-  memberOf: [apim, acme-corp, payment]
+  memberOf: [apim]
 ---
 # Apim Team member
 apiVersion: backstage.io/v1alpha1
@@ -172,6 +172,6 @@ spec:
   profile:
     picture: https://api.dicebear.com/7.x/avataaars/svg?seed=s&backgroundColor=transparent
     email: lp@example.com
-  memberOf: [leasing, acme-corp, credit]
+  memberOf: [credit]
 ---
 
