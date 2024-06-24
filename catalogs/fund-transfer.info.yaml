@@ -17,7 +17,7 @@ spec:
   system: fund-transfer
   domain: external-gw
   consumesApis:
-    - oauth-2.0
+    - oauth-2
   providesApis:
     - fund-transfer
   definition:

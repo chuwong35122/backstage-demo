@@ -19,7 +19,7 @@ spec:
   definition:
     $text: ../open-api/slip-verification.yaml
   consumesApis:
-    - oauth-2.0
+    - oauth-2
   providesApis:
     - fund-transfer
   apiConsumedBy:

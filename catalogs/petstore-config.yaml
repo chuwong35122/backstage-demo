@@ -18,6 +18,6 @@ spec:
   definition:
     $text: ../open-api/petstore.yaml
   consumesApis:
-    - oauth-2.0
+    - oauth-2
   providesApis:
     - petstore-api
