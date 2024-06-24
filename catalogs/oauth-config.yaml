@@ -13,6 +13,7 @@ spec:
   type: openapi
   lifecycle: production
   owner: apim
+  domain: external-gw
   system: a-api
   definition:
     $text: ../open-api/oauth.yaml
