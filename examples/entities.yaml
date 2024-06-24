@@ -15,7 +15,6 @@ metadata:
 spec:
   owner: apim
   domain: extenal-gw
-  depe
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System
@@ -68,14 +67,12 @@ spec:
   system: a-api
   domain: external-gw
   type: service
-  providesApis: [oauth-2-api]
-  dependsOn:
-    - apigee
+  consumesApi: [oauth-2-api]
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: slip-verification
+  name: slip-verification-service
   description: Slip verification system for verifying slip payment from ACME Corp.
 spec:
   owner: apim
@@ -84,14 +81,12 @@ spec:
   domain: external-gw
   type: service
   consumesApi: [oauth-2-api]
-  providesApi: [slip-verification-api]
-  dependsOn:
-    - apigee
+  providesApis: [slip-verification-api]
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: fund-transfer
+  name: fund-transfer-service
   description: Fund transfer system for transferring funds between accounts.
 spec:
   owner: apim
@@ -100,29 +95,25 @@ spec:
   type: service
   system: a-api
   consumesApi: [oauth-2-api]
-  providesApi: [fund-transfer-api]
-  dependsOn:
-    - apigee
+  providesApis: [fund-transfer-api]
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: fraud-detection
+  name: fraud-detection-service
   description: Fraud detection system for detecting fraudulent activities between transaction.
 spec:
   owner: channel
   lifecycle: production
-  domain: external-gw
+  domain: internal-gw
   type: service
-  system: a-api
+  system: creditscorer
   consumesApi: [oauth-2-api]
-  dependsOn:
-    - apigee
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: credit-scoring
+  name: credit-scoring-service
   description: Credit scoring system for scoring credit of customers.
 spec:
   owner: leasing
@@ -132,8 +123,6 @@ spec:
   system: creditscorer
   consumesApi: [oauth-2-api]
   providesApi: [petstore-api]
-  dependsOn:
-    - apigee
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
 apiVersion: backstage.io/v1alpha1
