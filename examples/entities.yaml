@@ -21,7 +21,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: openapi
+  name: apimopenapi
   description: OpenAPI system for managing external APIs.
 spec:
   owner: apim
@@ -30,7 +30,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name:
+  name: creditscorer
   description: Credit scorer system for scoring credit of customers.
 spec:
   owner: credit-scoring
